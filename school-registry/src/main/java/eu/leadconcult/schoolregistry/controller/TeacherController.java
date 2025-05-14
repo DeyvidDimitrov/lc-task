@@ -1,6 +1,8 @@
 package eu.leadconcult.schoolregistry.controller;
 
+import eu.leadconcult.schoolregistry.controller.converter.CollectionConversionService;
 import eu.leadconcult.schoolregistry.controller.model.TeacherModel;
+import eu.leadconcult.schoolregistry.controller.view.PersonView;
 import eu.leadconcult.schoolregistry.data.entity.Teacher;
 import eu.leadconcult.schoolregistry.service.TeacherService;
 import jakarta.validation.Valid;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @RequestMapping("/teachers")
 public class TeacherController {
     private final TeacherService teacherService;
+    private final CollectionConversionService conversionService;
 
     @GetMapping("/count")
     public long getTeacherCount() {
@@ -26,8 +29,8 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public Teacher updateTeacher(@PathVariable UUID id, @Valid @RequestBody TeacherModel teacherModel) {
-        return teacherService.updateTeacher(id, teacherModel);
+    public PersonView updateTeacher(@PathVariable UUID id, @Valid @RequestBody TeacherModel teacherModel) {
+        return conversionService.convert(teacherService.updateTeacher(id, teacherModel), PersonView.class);
     }
 
     @DeleteMapping("/{id}")

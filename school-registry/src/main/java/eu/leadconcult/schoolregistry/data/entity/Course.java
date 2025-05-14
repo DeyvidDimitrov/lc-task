@@ -15,13 +15,16 @@ public class Course extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CourseType type = CourseType.MAIN;
+    @Column(nullable = false)
+    private CourseType type;
 
     @ManyToOne(optional = false)
     private Teacher teacher;
 
     @ManyToMany
+    @JoinTable(name = "course_students",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id"))
     private Set<Student> students = new HashSet<>();
 }

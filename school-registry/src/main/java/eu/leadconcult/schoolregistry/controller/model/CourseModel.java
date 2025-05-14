@@ -1,6 +1,8 @@
 package eu.leadconcult.schoolregistry.controller.model;
 
 import eu.leadconcult.schoolregistry.data.entity.CourseType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +16,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseModel {
+
+    @NotBlank
     private String name;
-    private CourseType type;
+    @NotNull
+    private CourseType type = CourseType.MAIN;
     private UUID teacherId;
     private List<UUID> studentIds;
 }

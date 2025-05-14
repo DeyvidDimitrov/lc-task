@@ -9,6 +9,8 @@ import eu.leadconcult.schoolregistry.data.entity.Student;
 import eu.leadconcult.schoolregistry.data.repository.GroupRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,8 +45,8 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<Student> getStudentsInGroup(UUID id) {
-        return studentService.getStudentsByGroupId(id);
+    public Page<Student> getStudentsInGroup(UUID id, Pageable pageable) {
+        return studentService.getStudentsByGroupId(id, pageable);
     }
 
     @Transactional(readOnly = true)

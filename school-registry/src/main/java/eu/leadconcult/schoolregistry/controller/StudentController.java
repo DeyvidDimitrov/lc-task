@@ -1,11 +1,14 @@
 package eu.leadconcult.schoolregistry.controller;
 
+import eu.leadconcult.schoolregistry.controller.converter.CollectionConversionService;
 import eu.leadconcult.schoolregistry.controller.model.StudentFilter;
 import eu.leadconcult.schoolregistry.controller.model.StudentModel;
+import eu.leadconcult.schoolregistry.controller.view.PersonView;
 import eu.leadconcult.schoolregistry.data.entity.Student;
 import eu.leadconcult.schoolregistry.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ import java.util.UUID;
 @RequestMapping("/students")
 public class StudentController {
     private final StudentService studentService;
+    private final CollectionConversionService conversionService;
 
     @PostMapping
     public void createStudent(@Valid @RequestBody StudentModel studentModel) {
@@ -24,8 +28,8 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable UUID id, @Valid @RequestBody StudentModel studentModel) {
-        return studentService.updateStudent(id, studentModel);
+    public void updateStudent(@PathVariable UUID id, @Valid @RequestBody StudentModel studentModel) {
+        studentService.updateStudent(id, studentModel);
     }
 
     @DeleteMapping("/{id}")
@@ -34,8 +38,8 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getStudentsFiltered(StudentFilter filter, Pageable pageable) {
-        return studentService.getStudentsFiltered(filter, pageable);
+    public Page<PersonView> getStudentsFiltered(StudentFilter filter, Pageable pageable) {
+        return conversionService.convert(studentService.getStudentsFiltered(filter, pageable), PersonView.class);
     }
 
     @GetMapping("/count")

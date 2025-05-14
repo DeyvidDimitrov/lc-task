@@ -42,8 +42,7 @@ class TeacherServiceTest {
         Teacher result = teacherService.createTeacher(model);
 
         assertNotNull(result);
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
+        assertEquals("John", result.getName());
         assertEquals(35, result.getAge());
 
         verify(teacherRepository).save(any(Teacher.class));

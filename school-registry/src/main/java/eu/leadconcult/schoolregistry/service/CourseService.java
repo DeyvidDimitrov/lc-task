@@ -8,6 +8,7 @@ import eu.leadconcult.schoolregistry.data.entity.Course;
 import eu.leadconcult.schoolregistry.data.entity.Student;
 import eu.leadconcult.schoolregistry.data.entity.Teacher;
 import eu.leadconcult.schoolregistry.data.repository.CourseRepository;
+import eu.leadconcult.schoolregistry.exceptions.CourseWithoutTeacherException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class CourseService {
             Teacher teacher = teacherService.getById(courseModel.getTeacherId());
             course.setTeacher(teacher);
         } else {
-            throw new IllegalArgumentException(); // TODO: Custom exception
+            throw new CourseWithoutTeacherException("Course without teacher can't be created.");
         }
 
         if (!courseModel.getStudentIds().isEmpty()) {

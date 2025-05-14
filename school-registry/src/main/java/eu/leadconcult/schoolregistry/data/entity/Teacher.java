@@ -1,8 +1,6 @@
 package eu.leadconcult.schoolregistry.data.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +12,12 @@ import java.util.Set;
 @Entity
 @Table(name = "teachers")
 public class Teacher extends Person {
+
+    @ManyToMany
+    @JoinTable(name = "teacher_social_groups",
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private Set<Group> groups = new HashSet<>();
 
     @OneToMany(mappedBy = "teacher")
     private Set<Course> courses = new HashSet<>();
