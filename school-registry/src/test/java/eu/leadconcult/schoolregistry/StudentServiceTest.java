@@ -5,18 +5,18 @@ import eu.leadconcult.schoolregistry.data.entity.Student;
 import eu.leadconcult.schoolregistry.data.repository.StudentRepository;
 import eu.leadconcult.schoolregistry.service.StudentService;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
 
     @Mock
@@ -24,11 +24,6 @@ class StudentServiceTest {
 
     @InjectMocks
     private StudentService studentService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void testCreateStudent() {
@@ -59,13 +54,13 @@ class StudentServiceTest {
         verify(studentRepository).deleteById(id);
     }
 
-
     @Test
     void testDeleteStudent_NotFound() {
         UUID notExisting = UUID.randomUUID();
-        when(studentRepository.findById(notExisting)).thenReturn(Optional.empty());
 
+        when(studentRepository.existsById(notExisting)).thenReturn(false);
         assertThrows(EntityNotFoundException.class, () -> studentService.deleteStudent(notExisting));
-        verify(studentRepository, never()).delete(any());
+        verify(studentRepository, never()).deleteById(any());
     }
+
 } 
