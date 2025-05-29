@@ -5,11 +5,11 @@ import eu.leadconcult.schoolregistry.data.entity.Teacher;
 import eu.leadconcult.schoolregistry.data.repository.TeacherRepository;
 import eu.leadconcult.schoolregistry.service.TeacherService;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TeacherServiceTest {
 
     @Mock
@@ -25,19 +26,14 @@ class TeacherServiceTest {
     @InjectMocks
     private TeacherService teacherService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void testCreateTeacher() {
         TeacherModel model = new TeacherModel("John", 35);
-        Teacher teacher = new Teacher();
-        teacher.setName("John");
-        teacher.setAge(35);
+        Teacher expected = new Teacher();
+        expected.setName("John");
+        expected.setAge(35);
 
-        when(teacherRepository.save(any(Teacher.class))).thenReturn(teacher);
+        when(teacherRepository.save(any(Teacher.class))).thenReturn(expected);
 
         Teacher result = teacherService.createTeacher(model);
 
@@ -50,52 +46,62 @@ class TeacherServiceTest {
 
     @Test
     void testUpdateTeacher_Success() {
-        TeacherModel model = new TeacherModel("Jane", 40);
-        Teacher existing = new Teacher();
-        existing.setName("John");
-        existing.setAge(35);
         UUID id = UUID.randomUUID();
+        Teacher existing = new Teacher();
         existing.setId(id);
+        existing.setName("John");
+        existing.setAge(30);
+
+        TeacherModel update = new TeacherModel("Jane", 40);
 
         when(teacherRepository.findById(id)).thenReturn(Optional.of(existing));
         when(teacherRepository.save(existing)).thenReturn(existing);
 
-        Teacher updated = teacherService.updateTeacher(id, model);
+        Teacher result = teacherService.updateTeacher(id, update);
 
-        assertEquals("Jane", updated.getName());
-        assertEquals(40, updated.getAge());
-
+        assertEquals("Jane", result.getName());
+        assertEquals(40, result.getAge());
         verify(teacherRepository).save(existing);
     }
 
     @Test
     void testUpdateTeacher_NotFound() {
-        TeacherModel model = new TeacherModel("Test", 25);
-        UUID notExisting = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
+        when(teacherRepository.findById(id)).thenReturn(Optional.empty());
 
-        when(teacherRepository.findById(notExisting)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> teacherService.updateTeacher(notExisting, model));
+        TeacherModel model = new TeacherModel("Jane", 40);
+        assertThrows(EntityNotFoundException.class, () -> teacherService.updateTeacher(id, model));
     }
 
     @Test
-    void testDeleteTeacher_Success() {
-        Teacher teacher = new Teacher();
+    void testGetById_Success() {
         UUID id = UUID.randomUUID();
+        Teacher teacher = new Teacher();
         teacher.setId(id);
 
         when(teacherRepository.findById(id)).thenReturn(Optional.of(teacher));
 
-        teacherService.deleteTeacher(id);
+        Teacher result = teacherService.getById(id);
 
-        verify(teacherRepository).delete(teacher);
+        assertEquals(id, result.getId());
     }
 
     @Test
-    void testDeleteTeacher_NotFound() {
-        UUID notExisting = UUID.randomUUID();
-        when(teacherRepository.findById(notExisting)).thenReturn(Optional.empty());
+    void testGetById_NotFound() {
+        UUID id = UUID.randomUUID();
 
-        assertThrows(EntityNotFoundException.class, () -> teacherService.deleteTeacher(notExisting));
+        when(teacherRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> teacherService.getById(id));
     }
-} 
+
+    @Test
+    void testDeleteTeacher_ByEntity() {
+        Teacher teacher = new Teacher();
+        teacher.setId(UUID.randomUUID());
+
+        teacherService.deleteTeacher(teacher);
+
+        verify(teacherRepository).delete(teacher);
+    }
+}

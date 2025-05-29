@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -86,4 +87,15 @@ public class CourseService {
 
         return view;
     }
+
+    @Transactional(readOnly = true)
+    public List<Course> getCoursesTaughtByTeacher(UUID teacherId) {
+        return courseRepository.findByTeacher_Id(teacherId);
+    }
+
+    public void unassignedTeacher(Course course) {
+        course.setTeacher(null);
+        courseRepository.save(course);
+    }
+
 }

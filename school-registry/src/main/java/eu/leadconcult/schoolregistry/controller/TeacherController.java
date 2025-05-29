@@ -4,6 +4,7 @@ import eu.leadconcult.schoolregistry.controller.converter.CollectionConversionSe
 import eu.leadconcult.schoolregistry.controller.model.TeacherModel;
 import eu.leadconcult.schoolregistry.controller.view.PersonView;
 import eu.leadconcult.schoolregistry.data.entity.Teacher;
+import eu.leadconcult.schoolregistry.service.TeacherManagementService;
 import eu.leadconcult.schoolregistry.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/teachers")
 public class TeacherController {
     private final TeacherService teacherService;
+    private final TeacherManagementService teacherManagementService;
     private final CollectionConversionService conversionService;
 
     @GetMapping("/count")
@@ -34,7 +36,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTeacher(@PathVariable UUID id) {
-        teacherService.deleteTeacher(id);
+    public void deleteTeacher(@PathVariable UUID id, @RequestParam boolean force) {
+        teacherManagementService.deleteTeacher(id, force);
     }
 }

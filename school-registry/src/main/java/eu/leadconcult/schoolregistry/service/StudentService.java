@@ -42,9 +42,10 @@ public class StudentService {
 
     @Transactional
     public void deleteStudent(UUID id) {
-        if (id != null) {
-            studentRepository.deleteById(id);
+        if (!studentRepository.existsById(id)) {
+            throw new EntityNotFoundException("Student not found");
         }
+        studentRepository.deleteById(id);
     }
 
     @Transactional
