@@ -1,13 +1,16 @@
 package eu.leadconcult.schoolregistry.service;
 
 import eu.leadconcult.schoolregistry.controller.model.TeacherModel;
+import eu.leadconcult.schoolregistry.data.entity.Course;
 import eu.leadconcult.schoolregistry.data.entity.Teacher;
 import eu.leadconcult.schoolregistry.data.repository.TeacherRepository;
+import eu.leadconcult.schoolregistry.exceptions.CourseWithoutTeacherException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,10 +50,7 @@ public class TeacherService {
         return teacherRepository.save(teacher);
     }
 
-    @Transactional
-    public void deleteTeacher(UUID id) {
-        if (id != null) {
-            teacherRepository.deleteById(id);
-        }
+    public void deleteTeacher(Teacher teacher) {
+        teacherRepository.delete(teacher);
     }
 }

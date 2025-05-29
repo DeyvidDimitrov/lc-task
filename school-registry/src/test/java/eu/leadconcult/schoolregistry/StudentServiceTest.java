@@ -2,7 +2,6 @@ package eu.leadconcult.schoolregistry;
 
 import eu.leadconcult.schoolregistry.controller.model.StudentModel;
 import eu.leadconcult.schoolregistry.data.entity.Student;
-import eu.leadconcult.schoolregistry.data.repository.GroupRepository;
 import eu.leadconcult.schoolregistry.data.repository.StudentRepository;
 import eu.leadconcult.schoolregistry.service.StudentService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,9 +21,6 @@ class StudentServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
-
-    @Mock
-    private GroupRepository groupRepository;
 
     @InjectMocks
     private StudentService studentService;
@@ -54,16 +50,15 @@ class StudentServiceTest {
 
     @Test
     void testDeleteStudent_Success() {
-        Student student = new Student();
         UUID id = UUID.randomUUID();
-        student.setId(id);
 
-        when(studentRepository.findById(id)).thenReturn(Optional.of(student));
+        when(studentRepository.existsById(id)).thenReturn(true);
 
         studentService.deleteStudent(id);
 
-        verify(studentRepository).delete(student);
+        verify(studentRepository).deleteById(id);
     }
+
 
     @Test
     void testDeleteStudent_NotFound() {
